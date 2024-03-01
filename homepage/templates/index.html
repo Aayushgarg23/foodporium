@@ -1,0 +1,1165 @@
+{% load django_template_maths %}
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FOODPORIUM</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" /> 
+  <style>
+	body {
+		font-family: 'Poppins', sans-serif;
+		background-color: #f8f9fa;
+		height: 100vh;
+	}
+
+	.highlight {
+		color: green;
+		font-size: 16px;
+		font-weight: 600;
+	}
+
+	.container {
+		padding: 20px;
+	}
+
+	.product {
+		border: 1px solid #ddd;
+		border-radius: 10px;
+		padding: 20px;
+		margin-bottom: 20px;
+		background-color: #fff;
+		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	}
+
+	.product img {
+		max-width: 100%;
+		height: auto;
+		border-radius: 10px;
+	}
+
+	.cart-counter {
+		position: absolute;
+		top: 5px;
+		right: 15px;
+		background-color: #343a40;
+		color: #fff;
+		border-radius: 50%;
+		padding: 5px 10px;
+		font-size: 14px;
+		z-index: 999;
+	}
+
+	.cart {
+		position: fixed;
+		bottom: 20px;
+		right: 20px;
+	}
+
+	.cart-btn {
+		background-color: #28a745;
+		border: none;
+		color: #fff;
+		border-radius: 30px;
+		padding: 10px 20px;
+		font-size: 16px;
+		cursor: pointer;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	}
+
+	#itemAddedModal {
+		background-color: rgba(0, 0, 0, 0.5);
+	}
+
+	.closeBtn {
+		background-color: transparent;
+		border-radius: 0.2rem;
+		margin-left: 1rem;
+		border: none;
+		color: white;
+	}
+
+	.successImg {
+		max-width: 100%;
+		max-height: 50px;
+		/* You can adjust this value as needed */
+		display: block;
+		margin: 0 auto;
+	}
+
+	/* Add this to your existing CSS */
+	.overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 0, 0, 0.5);
+		/* Semi-transparent black */
+		z-index: 1000;
+		/* Place it above other content */
+		display: none;
+		/* Initially hidden */
+	}
+
+	/* Apply this class to the overlay when needed */
+	.overlay.active {
+		display: block;
+	}
+
+	.error {
+		font-size: 12px;
+		color: red;
+		font-size: bold;
+	}
+
+		.ribbon-wrapper-green {
+		width: 85px;
+		height: 88px;
+		overflow: hidden;
+		position: absolute;
+		top: 0;
+		right: 15px;
+	}
+
+	.ribbon-green {
+		font: bold 12px Sans-Serif;
+		color: white;
+		text-align: center;
+		text-shadow: rgba(255, 255, 255, 0.5) 0px 1px 0px;
+		-webkit-transform: rotate(45deg);
+		-moz-transform: rotate(45deg);
+		-ms-transform: rotate(45deg);
+		-o-transform: rotate(45deg);
+		position: relative;
+		padding: 7px 0;
+		left: -5px;
+		top: 20px;
+		width: 120px;
+		background-color: red;
+		background-image: -webkit-gradient(linear, left top, left bottom, from(red), to(red));
+		background-image: -webkit-linear-gradient(top, red, red);
+		background-image: -moz-linear-gradient(top, red, red);
+		background-image: -ms-linear-gradient(top, red, red);
+		background-image: -o-linear-gradient(top, red, red);
+		color: white;
+		-webkit-box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.3);
+		-moz-box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.3);
+		box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.3);
+	}
+
+	.ribbon-green:before,
+	.ribbon-green:after {
+		content: "";
+		border-top: 3px solid red;
+		border-left: 3px solid transparent;
+		border-right: 3px solid transparent;
+		position: absolute;
+		bottom: -3px;
+	}
+
+	.ribbon-green:before {
+		left: 0;
+	}
+
+	.ribbon-green:after {
+		right: 0;
+	}
+
+	.ad-image {
+    width: 80%;
+    height: 80%;
+    object-fit: fill; /* This property ensures that the image covers the entire container */
+    border-radius: 8px;
+}
+
+.ad-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    z-index: 1000;
+    /* width: ; */
+	width: 80%;
+	max-width: 700px;
+}
+        .close-btn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            cursor: pointer;
+        }
+		#categoryNavigation {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    color: #130d0d;
+    padding: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: none;
+  }
+  .category-navigation-item:last-child {
+    margin-right: 0; /* Remove margin from the last item */
+  }
+  .category-navigation-item {
+    cursor: pointer;
+    transition: opacity 0.3s;
+  }
+
+  .category-navigation-item:hover {
+    opacity: 0.8;
+  }
+
+  .category-image {
+    max-width: 70%;
+    height: auto;
+    border-radius:0;
+  }
+
+  /* Style for category containers (adjust as needed) */
+  .category {
+    padding: 0px 15px;
+    margin: 20px 0;
+    background-color:none;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  #layout2{
+	height: 100vh;
+	width: 100vw;
+	background-color: rgba(255, 255, 255, 0.9);
+	position: absolute;
+	top:0;
+	left:0;
+	z-index:11;
+  }
+  .categoryContainerWrapper::-webkit-scrollbar {
+  height: 2px; /* height of horizontal scrollbar */
+}
+
+/* Handle for horizontal scrollbar */
+.categoryContainerWrapper::-webkit-scrollbar-thumb:horizontal {
+  background: #888;
+  width: 2px; /* width of horizontal scrollbar */
+}
+
+/* Handle on hover for horizontal scrollbar */
+.categoryContainerWrapper::-webkit-scrollbar-thumb:hover:horizontal {
+  background: #555;
+}	
+.categoryContainerWrapper {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 12px; /* Adjust as needed */
+}
+
+
+/* For desktop view */
+.footer {
+            background-color: #f3f3f3;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-links a {
+            margin-right: 10px;
+        }
+
+        /* For mobile view */
+        @media screen and (max-width: 500px) {
+            .footer {
+                padding: 0px;
+            }
+
+            .footer-content {
+                max-width: 100%;
+                padding: 0;
+            }
+
+            .footer-links {
+                margin-top: 0px;
+            }
+
+            .footer-links a {
+                display: block;
+                margin-bottom: 0px;
+            }
+        }
+
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            text-align: center;
+        }
+
+        .popup-content {
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: white;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+
+	</style>
+</head>
+
+<body>
+<div class="popup-overlay" id="popupShipping">
+    <div class="popup-content">
+        <span class="close-btn" onclick="closePopup('popupShipping')">X</span>
+        <h2>Shipping Policy</h2>
+        <p>
+            1. Delivery Zones and Charges
+            <br>
+            a. Foodporium delivers to specified zones within Jind (including some villages nearby Jind). Delivery charges, if applicable, are calculated based on the delivery location and will be displayed during the checkout process.
+            <br>
+            b. We reserve the right to update delivery zones and charges. Please check the website or contact customer service for the most up-to-date information.
+            <br><br>
+            2. Delivery Timeframes
+            <br>
+            a. Estimated delivery times will be provided at the time of order placement. These estimates are based on factors such as order volume, traffic conditions, and weather.
+            <br>
+            b. Foodporium strives to meet the estimated delivery times but does not guarantee delivery within a specific timeframe. Delays may occur due to unforeseen circumstances.
+            <br><br>
+            3. Delivery Methods
+            <br>
+            a. Foodporium primarily uses its own delivery team for order fulfillment.
+            <br>
+            b. In some cases, third-party delivery services may be utilized. In such instances, the terms and conditions of the third-party service may apply.
+            <br><br>
+            4. Order Tracking
+            <br>
+            a. For orders delivered by Foodporium's own team, limited order tracking may be available. Customers will be notified of the delivery status through SMS or email.
+            <br>
+            b. Orders delivered by third-party services may provide separate tracking options, as per the policies of the third-party service.
+            <br><br>
+            5. Delivery Confirmation
+            <br>
+            a. Once the order is successfully delivered, customers will receive a confirmation notification.
+            <br>
+            b. It is the responsibility of the customer to provide accurate delivery information. Foodporium is not responsible for deliveries to incorrect addresses provided by the customer.
+            <br><br>
+            6. Unavailability and Redelivery
+            <br>
+            a. If a customer is unavailable to receive the delivery, the delivery team will attempt to contact the customer. If unsuccessful, the order may be returned to the store for customer pickup.
+            <br>
+            b. A redelivery attempt may be made, subject to an additional delivery charge.
+            <br><br>
+            7. Contact Information
+            <br>
+            If you have any questions or concerns about our Delivery Policy, please contact us at jindfdm@gmail.com.
+        </p>
+    </div>
+</div>
+<div class="popup-overlay" id="popupTerms">
+    <div class="popup-content">
+        <span class="close-btn" onclick="closePopup('popupTerms')">X</span>
+        <h2>Terms and Conditions</h2>       <p>
+        1. Acceptance of Terms
+        By accessing and using the Foodporium website (the "Site"), you agree to comply with and be bound by these Terms and Conditions. If you do not agree to these terms, please refrain from using the Site.
+        <br><br>
+        2. Changes to Terms
+        Foodporium reserves the right to modify, update, or change these Terms and Conditions at any time without prior notice. It is your responsibility to review these terms regularly.
+        <br><br>
+        3. Use of the Site
+        You agree to use the Site for lawful purposes only. You may not use the Site in any way that could harm, disable, overburden, or impair our services or interfere with any other party's use and enjoyment of the Site.
+        <br><br>
+        4. Ordering and Purchases
+        a. Menu Information: Foodporium strives to provide accurate and up-to-date menu information, but we do not guarantee the accuracy of such information. Prices and availability are subject to change without notice.
+        b. Online Orders: When placing orders through our website, you agree to provide accurate and complete information. Foodporium is not responsible for errors in the information provided by you.
+        c. Payment: Payments for orders placed through the website are processed securely. Foodporium does not store credit card information.
+        <br><br>
+        5. Privacy Policy
+        Your use of the Site is also governed by our Privacy Policy,
+        <br><br>
+        6. Intellectual Property
+        a. Trademarks and Copyrights: All trademarks, logos, and content on the Site are the property of Foodporium and are protected by intellectual property laws.
+        b. Use of Content: You may not reproduce, distribute, display, or create derivative works of any content on the Site without the express written permission of Foodporium.
+        <br><br>
+        7. Limitation of Liability
+        Foodporium is not liable for any direct, indirect, incidental, consequential, or punitive damages arising from the use of the Site or any services provided.
+        <br><br>
+        8. Governing Law
+        These Terms and Conditions are governed by and construed in accordance with the laws and you irrevocably submit to the exclusive jurisdiction of the courts in that location.
+        <br><br>
+        9. Contact Information
+        If you have any questions or concerns about these Terms and Conditions, please contact us at jindfdm@gmail.com
+    </p>
+    </div>
+</div>
+
+<div class="popup-overlay" id="popupRefund">
+    <div class="popup-content">
+        <span class="close-btn" onclick="closePopup('popupRefund')">X</span>
+        <h2>Refund Policy</h2>
+        <p>
+            1. Returns and Exchanges
+            <br>
+            a. In-Store Purchases: Foodporium does not accept returns or exchanges for food items purchased in-store.
+            <br>
+            b. Online Orders: Returns and exchanges are not applicable for food items ordered online due to the nature of the products.
+            <br><br>
+            2. Refunds
+            <br>
+            a. In-Store Purchases: Refunds for in-store purchases are not applicable for food items.
+            <br>
+            b. Online Orders: Refunds for online orders will be processed through the original payment method within 5 working days. Shipping and handling fees are non-refundable.
+            <br><br>
+            3. Damaged or Incorrect Items
+            <br>
+            If you receive a damaged or incorrect food item, please contact Foodporium customer service within 2 days of receiving the order. We will arrange for a replacement or issue a refund, as appropriate.
+            <br><br>
+            4. How to Initiate a Return
+            <br>
+            a. In-Store Purchases: Food items purchased in-store are not eligible for returns.
+            <br>
+            b. Online Orders: To report a damaged or incorrect food item in an online order, please contact our customer service at jindfdm@gmail.com. Provide your order number and details about the issue.
+            <br><br>
+            5. Cancellation Policy
+            <br>
+            a. In-Store Orders: Once an order is placed in-store, it cannot be canceled or modified.
+            <br>
+            b. Online Orders: Online orders can be canceled within 2 hours of placing the order by contacting our customer service at jindfdm@gmail.com.
+            <br><br>
+            6. Refund Processing Time
+            <br>
+            Refunds for eligible online orders will be processed within 5 working days from the date of approval.
+            <br><br>
+            7. Contact Information
+            <br>
+            If you have any questions or concerns about our Return and Refund Policy, please contact us at jindfdm@gmail.com.
+        </p>
+    </div>
+</div>
+
+	  {% if flash_offer.available %}
+	  <div id="layout2"></div>
+	  <div class="ad-container" id="adContainer">
+		  <span class="close-btn" onclick="closeAd()"><i class="fa-solid fa-circle-xmark fa-2x" style="color: #000000;"></i></span>
+		  <img class="ad-image" src="{{ flash_offer.image.url }}" alt="Ad Image">
+		 
+	  </div>
+	  {% endif %}<div style="overflow: hidden;">       <marquee   
+		   style="display: inline-block;  background-color: orange; font-weight: bold"  
+		       behavior="scroll"      direction="left"    >
+		{% for moving_text in movingtext %}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9733;&nbsp;&nbsp;{{ moving_text }}{% endfor %}</marquee> </div>
+  
+			   
+<div class="container">
+  <!-- <h4 style="color: grey;">{{ delivery.amount }}</h4>
+  <h4 style="color: grey;">{{ delivery.mininum_order }}</h4>
+  <h4 style="color: grey;">{{ movingtext }}</h4> -->
+
+
+
+    <div class="d-flex justify-content-between">
+        <div>
+            <img class="logo" src="https://website0000.s3.amazonaws.com/foodporium/images/food+png.png" alt="FOODPORIUM Logo" style="height: 41px; width: auto;">
+        </div>
+        <div>
+            <a class="btn" style="background-color: orange !important; margin-right: 5px;" href="{% url 'edit_customer' %}">Edit Profile</a>
+            <a class="btn" style="background-color: orange !important;" href="{% url 'logout' %}">Logout</a>
+        </div>
+    </div>
+	
+	<div style="overflow-x: scroll; height: 180px;background-color: #f8f9fa;" class="categoryContainerWrapper">
+		<div class="font-weight-bold" style="font-size: 34px;margin-top:0.1rem;">Categories</div>
+		<div class="d-flex justify-content-between align-items-center categoryContainer">
+			{% for category in categories %}
+			<a href="#{{category.name}}" class="d-flex justify-content-center align-items-center flex-column"style="height: 80px; width: 70px;margin:0.2rem;">
+				<div class="d-flex justify-content-center flex-column align-items-center" style="height: 80px; width: 70px; ">
+					<div class="d-flex flex-column justify-content-center align-items-center width-full" style="height: 80px; width: 70px; border-radius: 50%; background-color: orange;">
+						<img style="width: 100%;" src="{{category.image.url}}" alt="img">
+					</div>
+					<div style="font-size: 12px;text-decoration: none; color:#000000; font-weight: bold;">{{category.name}}</div>
+				</div>	
+			</a>
+			{% endfor %}
+		</div>
+	</div>
+	
+
+  {% for category in categories %} <h2 class="my-3" id="{{category.name}}">{{ category.name }}</h2>
+
+ 
+  <div class="row text-center"> {% for menu_item in menu_items %} {% if menu_item.category == category %} <div class="col-md-4">
+    <div class="product"> {% if menu_item.discount != 0 %} {% if menu_item.available %} <div class="ribbon-wrapper-green">
+      <div class="ribbon-green">{{ menu_item.discount }} Rs off</div>
+    </div> {% else %}
+      <!-- Apply different styling if the item is not available -->
+      <div class="ribbon-wrapper-green" style="opacity: 0.5; filter: blur(2px);">
+        <div class="ribbon-green">{{ menu_item.discount }} Rs off</div>
+      </div> {% endif %} {% endif %} {% if menu_item.available %} <img class="img-fluid d-block mx-auto" style="max-height: 150px;" src="{{menu_item.image.url}}" alt="Pasta 1" />
+      <h4>{{ menu_item.name }}</h4>
+      {% if menu_item.discount != 0 %}
+      <p style="color: grey; text-decoration: line-through">Price: &#8377;{{ menu_item.price }}</p>
+      <p>New Price: &#8377;{{ menu_item.price|sub:menu_item.discount }}</p>
+      <button class="btn btn-primary add-to-cart" data-name="{{ menu_item.name }}" data-price="{{ menu_item.price|sub:menu_item.discount }}"> Add to Cart </button>
+      {% else %}
+      <p>Price: &#8377;{{ menu_item.price }}</p>
+      <button class="btn btn-primary add-to-cart" data-name="{{ menu_item.name }}" data-price="{{ menu_item.price }}"> Add to Cart </button>
+
+      {% endif %}
+
+      {% else %} <div class="unavailable-overlay"></div>
+      <img class="img-fluid d-block mx-auto unavailable-image" style="max-height: 150px; filter: grayscale(100%);" src="{{menu_item.image.url}}" alt="Pasta 1" />
+      <h4 style="color: grey;">{{ menu_item.name }}</h4>
+      <p style="color: grey;">Price: &#8377;{{ menu_item.price}}</p>
+      <p style="color: grey;">Currently Not Available</p> {% endif %}
+    </div>
+  </div> {% endif %} {% endfor %} </div> {% endfor %}
+</div>
+<!-- Cart Item Added Modal -->
+<div class="modal fade" id="itemAddedModal" tabindex="-1" role="dialog" aria-labelledby="itemAddedModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="itemAddedModalLabel"> Item Added to Cart </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeCheckoutBtn()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="itemAddedMessage">
+        <!-- Item added message will be displayed here -->
+      </div>
+    </div>
+  </div>
+</div>
+<div class="cart">
+  <button class="cart-btn" id="cartCounter" data-toggle="modal" data-target="#cartModal"> View Cart 0 </button>
+</div>
+<!-- Cart Modal -->
+<div class="modal fade" id="cartModal" tabindex="-1" role="dialog" aria-labelledby="cartModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cartModalLabel">Your Cart</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeCheckoutBtn()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+	  <!-- EMpty cart -->
+	  <div
+            class="modal-body"
+            style="font-weight: bold; color: red; margin: auto"
+            id="emptyCartNotify"
+          >
+            Your Cart is empty
+          </div>
+      <div class="modal-body py-0" id="cartItems">
+        <!-- Cart items will be displayed here -->
+      </div>
+
+	  <!-- Delivery charges -->
+	  <div id="deliveryCharges" class="deliveryCharges modal-body py-0">
+		<p
+		  class="highlightDeliveryCharges mb-0"
+		  style="display: none;"
+		  id="highlightDeliveryCharges"
+		></p>
+		<p
+		  class="gotFreeDelivery highlightDeliveryCharges pt-3"
+		  style="display: none"
+		  id="gotFreeDelivery"
+		></p>
+	  </div>
+      
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"> Continue Shopping </button>
+        <button type="button" class="btn btn-primary" id="checkoutBtn"> Checkout </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Form Modal -->
+<div class="modal fade" style="overflow-y: scroll" id="checkoutModal" tabindex="-1" role="dialog" aria-labelledby="checkoutModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="checkoutModalLabel">Checkout</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeCheckoutBtn()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="checkoutForm">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ customer.name }}" required />
+            <p class="error" style="display:none;" id="nameError">Please enter your name.</p>
+          </div>
+          <div class="form-group">
+            <label for="address">Address</label>
+            <input type="text" class="form-control" id="address" name="address" value="{{ customer.address }}" required />
+            <p class="error" style="display:none;" id="addressError">Please enter your address.</p>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone</label>
+            <input type="tel" class="form-control" id="phone" name="phone" value="{{ customer.phone }}" required />
+            <p class="error" style="display:none;" id="phoneError">Please enter your phone number.</p>
+          </div>
+          <div class="form-group">
+            <label for="couponDropdown">Coupons</label>
+              <span style="color: red; font-size: small;">(Min. Cart Items Rs.{{delivery.mininum_order}} for offers/coupons)</span>
+
+              <select onchange="applyCoupon()" id="couponDropdown" class="form-control">
+              <option value="">--Select Coupon--</option> {% for coupon in coupons %} <option value="{{ coupon.coupon_amount }}">{{ coupon.coupon_name }} - {{coupon.coupon_amount}}</option> {% endfor %}
+            </select>
+          </div>
+          <h5 class="modal-title" id="checkoutModalLabel">Cart Items</h5>
+          <div class="modal-body" id="cartItemsFinal">
+            <!-- Cart items will be displayed here -->
+          </div>
+          <h4 id="discountAmount" class="highlight" style="display: none;"></h4>
+          <h5 class="modal-title text-primary" id="grandTotal">Total:00</h5>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeCheckoutBtn()"> Close </button>
+        <button type="submit" class="btn btn-primary" id="orderButton" form="checkoutForm"> Order </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Response Modal -->
+<div class="modal fade" id="responseModal" tabindex="-1" role="dialog" aria-labelledby="responseModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="responseModalLabel">Your Order</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-center" id="responseMessage">
+        <!-- Response message will be displayed here -->
+      </div>
+      <div class="modal-footer justify-content-center">
+        <div id="checkmarkContainer"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Overlay element -->
+<div class="overlay"></div>
+<!--    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>-->
+<!--    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>-->
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+	const cartItems = [];
+	let cartCounter = 0;
+	let final = 0;
+	var total;
+	let a =0;
+	var couponName="Null";
+
+
+	function openCheckoutModal() {
+
+	    console.log(a);
+		// console.log('final price is from checkout modal: ', final)
+		if(a<{{ delivery.mininum_order }}){
+
+		    console.log("a");
+		    console.log(a);
+			$('#couponDropdown').attr('disabled',true)
+		}else if(a>={{ delivery.mininum_order }}){
+		    console.log("a");
+		    console.log(a);
+			$('#couponDropdown').removeAttr('disabled')
+		}
+
+		$("#cartModal").modal("hide");
+		$("#checkoutModal").modal("show");
+	}
+	document.addEventListener("DOMContentLoaded", () => {
+		const addToCartButtons = document.querySelectorAll(".add-to-cart");
+		addToCartButtons.forEach((button) => {
+			button.addEventListener("click", addToCart);
+		});
+		const checkoutButton = document.getElementById("checkoutBtn");
+		checkoutButton.addEventListener("click", openCheckoutModal);
+		const orderButton = document.getElementById("orderButton");
+		orderButton.addEventListener("click", (e) => submitForm(e));
+	});
+
+	function addToCart(event) {
+		const name = event.target.getAttribute("data-name");
+		const price = parseFloat(event.target.getAttribute("data-price"));
+		cartItems.push({
+			name,
+			price
+		});
+		cartCounter++;
+		updateCartCounter();
+		updateItemAddedModal(name);
+	}
+
+	function updateCartCounter() {
+		const cartCounterDiv = document.getElementById("cartCounter");
+		cartCounterDiv.textContent = `View Items ${cartCounter}`;
+	}
+
+	function updateItemAddedModal(itemName) {
+		const itemAddedMessage = document.getElementById("itemAddedMessage");
+		itemAddedMessage.textContent = `✓ ${itemName} added to your cart!`;
+		$("#itemAddedModal").modal("show");
+	}
+
+	function removeCartItem(index) {
+		cartItems.splice(index, 1); // Remove the item at the specified index
+		cartCounter--;
+		updateCartCounter();
+		updateCartModal();
+	}
+
+	function closeCheckoutBtn() {
+		console.log("closecheckoutbtn is clicked");
+		$("#discountAmount").css("display", "none");
+		final = 0;
+		total=0;
+		$("#couponDropdown").val("");
+	}
+
+	function totalFunc(price) {
+		return price;
+	}
+
+	function updateCartModal() {
+
+		var dropdownTriggerText = document.createTextNode("\u20B9");
+		console.log(cartItems)
+		if(cartItems.length>0){
+			$('#emptyCartNotify').css('display','none')
+		}else if(cartItems.length==0){
+			$('#emptyCartNotify').css('display','block')
+		}
+		
+		// console.log('cart counter length is: ', cartCounter)
+		// if(cartCounter.length==0){
+		// 	$('#emptyCartNotify').css('display','block')
+		// }else if(cartCounter.length>0){
+		// 	$('#emptyCartNotify').css('display','none')
+		// }
+		const cartItemsDiv = document.getElementById("cartItems");
+		const cartItemsDivFinal = document.getElementById("cartItemsFinal");
+		cartItemsDiv.innerHTML = "";
+		cartItemsDivFinal.innerHTML = "";
+		let total = 0;
+		var dropdownTriggerText = document.createTextNode("\u20B9");
+		cartItems.forEach((item, index) => {
+			total += item.price;
+			const itemWrapper = document.createElement("div");
+			itemWrapper.className = "d-flex my-4";
+			const itemDiv = document.createElement("div");
+			const itemBtn = document.createElement("button");
+			itemBtn.innerHTML = "<i class='fa-solid fa-trash fa-2x' style='color: red;font-size:20px;'></i>";
+			itemBtn.className = "closeBtn";
+			itemDiv.textContent = `${item.name} - ${
+            dropdownTriggerText.nodeValue
+          }${item.price.toFixed(2)}`;
+			itemBtn.addEventListener("click", () => removeCartItem(index)); // Attach event handler to the close button
+			itemWrapper.appendChild(itemDiv);
+			itemWrapper.appendChild(itemBtn);
+			cartItemsDiv.appendChild(itemWrapper);
+		});
+		cartItems.forEach((item, index) => {
+			const itemWrapperf = document.createElement("div");
+			itemWrapperf.className = "d-flex my-4";
+			const itemDivf = document.createElement("div");
+			itemDivf.textContent = `${index + 1 + ". "}${item.name} - ${
+            dropdownTriggerText.nodeValue
+          }${item.price.toFixed(2)}`;
+			itemWrapperf.appendChild(itemDivf);
+			cartItemsDivFinal.appendChild(itemWrapperf);
+		});
+		const grandTotal = document.getElementById("grandTotal");
+		a =total;
+		if(total<{{ delivery.mininum_order }}){
+		    console.log('final price is after <: ',total)
+		    total = total+{{delivery.amount}};
+		    final = total;
+		    console.log("a");
+		    console.log(a);
+			grandTotal.innerHTML = `Total: ${
+			  dropdownTriggerText.nodeValue + (Number(a) + {{ delivery.amount }})
+			} <span style="font-weight:bold;font-size:14px;color:black;">Delivery Charges Added ${dropdownTriggerText.nodeValue}{{ delivery.amount }}`;
+		}else{
+		  total = a;
+		  final = total;
+		  console.log("a");
+		  console.log(a);
+			grandTotal.innerHTML = `Total: ${
+			  dropdownTriggerText.nodeValue + total
+			}`;
+
+		}
+        couponName="Null";
+		const checkoutBtn = document.getElementById("checkoutBtn");
+		checkoutBtn.textContent = `Checkout - Total: ${
+          dropdownTriggerText.nodeValue
+        } ${a.toFixed(2)}`;
+
+
+		console.log('final price is: ',total)
+		if(a>0 && a<{{ delivery.mininum_order }}){
+		    var min = "{{ delivery.mininum_order }}";
+			$('#highlightDeliveryCharges').html(`<p class="m-0 p-0" style="font-weight:bold;font-size:18px;">Add ${dropdownTriggerText.nodeValue}${min-final+{{delivery.amount}}} to cart for <span style="color:green;font-size:20px;">Free<span> Delivery.<p>`)
+			$('#highlightDeliveryCharges').css('display','block')
+			$('#gotFreeDelivery').css('display','none')
+			couponName = "Null"
+		}else if(a>={{ delivery.mininum_order }}){
+			$('#highlightDeliveryCharges').css('display','none')
+			$("#gotFreeDelivery").html(`<p class="m-0 p-0" style="font-weight:bold;font-size:18px;color:green;">Free Delivery Applied.<p>`)
+			$('#gotFreeDelivery').css('display','block')
+		}
+		if(a==0){
+			$('#checkoutBtn').attr('disabled',true)
+		}else{
+			$('#checkoutBtn').removeAttr('disabled',true)
+		}
+	}
+	$("#cartModal").on("show.bs.modal", function() {
+		// console.log('length of cart counter is: ', cartItems.length)
+		// if(cartItems.length>0){
+		// 	$('#emptyCartNotify').css('display','none')
+		// }
+		updateCartModal();
+		// console.log("yes displaying the cart modal")
+	});
+
+	function toggleOverlay() {
+		const overlay = document.querySelector(".overlay");
+		overlay.classList.toggle("active");
+	}
+
+	function submitForm(event) {
+		event.preventDefault();
+		const name = document.getElementById("name").value;
+		const address = document.getElementById("address").value;
+		const phone = document.getElementById("phone").value;
+		$('#nameError').css('display', 'none')
+		$('#addressError').css('display', 'none')
+		$('#phoneError').css('display', 'none')
+		if(name === "") {
+			$('#nameError').css('display', 'block')
+			return
+		}
+		if(address === "") {
+			$('#addressError').css('display', 'block')
+			return
+		}
+		if(phone === "") {
+			$('#phoneError').css('display', 'block')
+			return;
+		}
+		const grandTotal = totalFunc();
+		// Validate data as before
+		var amount = final; // Replace with the actual amount
+		let order_id;
+		$.ajax({
+			type: 'POST',
+			url: '/initiate_payment/', // Replace with your Django URL
+			data: {
+				'amount': amount
+			},
+			success: function(response) {
+				console.log('Payment initiated with ID:', response.id);
+				console.log(amount);
+				order_id = response.id;
+				aws()
+			},
+			error: function(error) {
+				console.error('Error initiating payment:', error);
+			}
+		});
+		function aws(){
+
+                            $("#checkoutModal").modal("hide");
+
+		                    $("#discountAmount").css("display", "none");
+                        	$("#couponDropdown").val("");
+                            console.log('Data sent successfully');
+                            const responseMessage = document.getElementById("responseMessage");
+                            // Clear any existing content in the checkmark container
+                            const checkmarkContainer = document.getElementById("checkmarkContainer");
+                            checkmarkContainer.innerHTML = "";
+                            responseMessage.textContent = "Ordered successfully!";
+                            // Create an image element for the checkmark
+                            const checkmarkImage = document.createElement("img");
+                            checkmarkImage.className = "successImg";
+                            checkmarkImage.src = "https://logowik.com/content/uploads/images/check-mark-badge6475.logowik.com.webp"; // Update with your image path
+                            checkmarkImage.alt = "Checkmark";
+                            checkmarkContainer.appendChild(checkmarkImage);
+                            $("#responseModal").modal("show"); // Display the response modal
+
+        const data = {
+                        name: name,
+                        address: address,
+                        phone: phone,
+                        items: items,
+                        total: final,
+                        coupon: couponName,
+                    };
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/save_order/', // Replace with your Django URL
+                        data: {
+                            'data': JSON.stringify(data),
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                        },})
+        }
+
+		function razorpayCall() {
+			const options = {
+				"key": "rzp_live_78D3VWnCydAsf49w",
+				"amount": amount * 100, // assuming grandTotal is in currency's smallest unit (e.g., paise for INR)
+				"currency": "INR",
+				"name": "FOODPORIUM",
+				"description": "Payment Description",
+				"order_id": order_id,
+				"handler": function(response) {
+					console.log(response)
+                if (response.razorpay_payment_id) {
+                    // Payment successful
+                    console.log("Payment successful! Payment ID: " + response.razorpay_payment_id);
+                    const items = cartItems;
+                    const grandTotal = totalFunc();
+                    const data = {
+                        name: name,
+                        address: address,
+                        phone: phone,
+                        items: items,
+                        total: final,
+                        coupon: couponName,
+                    };
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/save_order/', // Replace with your Django URL
+                        data: {
+                            'data': JSON.stringify(data),
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                        },
+                        success: function (response) {
+                            $("#discountAmount").css("display", "none");
+                        	$("#couponDropdown").val("");
+                            console.log('Data sent successfully');
+                            const responseMessage = document.getElementById("responseMessage");
+                            // Clear any existing content in the checkmark container
+                            const checkmarkContainer = document.getElementById("checkmarkContainer");
+                            checkmarkContainer.innerHTML = "";
+                            responseMessage.textContent = "Ordered successfully!";
+                            // Create an image element for the checkmark
+                            const checkmarkImage = document.createElement("img");
+                            checkmarkImage.className = "successImg";
+                            checkmarkImage.src = "https://logowik.com/content/uploads/images/check-mark-badge6475.logowik.com.webp"; // Update with your image path
+                            checkmarkImage.alt = "Checkmark";
+                            checkmarkContainer.appendChild(checkmarkImage);
+                            $("#responseModal").modal("show"); // Display the response modal
+                        },
+                        error: function (error) {
+                            console.error('Error sending data:', error);
+                            const responseMessage = document.getElementById("responseMessage");
+                            responseMessage.textContent = "Order Unsuccessful";
+                            $("#responseModal").modal("show"); // Display the response modal
+                        },
+                        complete: function () {
+                            $("#checkoutModal").modal("hide");
+                        }
+                    })
+                    .fail(function (error) {
+                        console.error('Error handling response:', error);
+                    });
+                } else {
+                    // Payment failed or was canceled
+                    console.log("Payment failed or was canceled");
+                }
+
+				},
+				"prefill": {
+					"name": name, // Use the actual name from the form
+					"email": "john@example.com", // You can add email from the form if available
+					"contact": phone // Use the actual phone number from the form
+				}
+			};
+			var rzp = new Razorpay(options);
+			rzp.open();
+		}
+	}
+	let lastCoupon = ""
+
+	function applyCoupon() {
+		if(final == 0 || final == "") {
+			return;
+		}
+		let couponAmount;
+		var dropdownTriggerText = document.createTextNode("\u20B9");
+		if($('#couponDropdown').val() === "") {
+			$('#discountAmount').css('display', 'none')
+			couponAmount = Number(lastCoupon)
+			final = final + couponAmount;
+		} else {
+		    var selectedOption = $('#couponDropdown option:selected');
+
+        // Extract the coupon name from the selected option's text content
+            couponName = selectedOption.text().split(' - ')[0];
+			couponAmount = Number($('#couponDropdown').val())
+			lastCoupon = $('#couponDropdown').val()
+			final = final - couponAmount;
+			$('#discountAmount').css('display', 'block')
+			$('#discountAmount').html(`Discount Added ${dropdownTriggerText.nodeValue} ${couponAmount}`)
+		}
+		console.log("final amount is: ", final)
+		const grandTotal = document.getElementById("grandTotal");
+		grandTotal.innerHTML = `Total: ${
+          dropdownTriggerText.nodeValue+ final
+        }`;
+	}
+	setTimeout(function () {
+        closeAd();
+    }, 4000);
+
+    function closeAd() {
+        var adContainer = document.getElementById("adContainer");
+        adContainer.style.display = "none";
+		$('#layout2').css('display','none')
+    }
+    document.addEventListener("DOMContentLoaded", function () {
+    const categoryNavigationItems = document.querySelectorAll(".category-navigation-item");
+
+    categoryNavigationItems.forEach((item) => {
+      item.addEventListener("click", function () {
+        const categoryId = this.getAttribute("data-category-id");
+        scrollToCategory(categoryId);
+      });
+    });
+  });
+
+  function scrollToCategory(categoryId) {
+    const categoryElement = document.getElementById(categoryId);
+
+    if (categoryElement) {
+      categoryElement.scrollIntoView({ behavior: "smooth" });
+    }
+  }
+
+<!--document.querySelectorAll('.categoryContainer a[href^="#"]').forEach(anchor => {-->
+<!--    anchor.addEventListener('click', function (e) {-->
+<!--        e.preventDefault();-->
+
+<!--        const targetId = decodeURIComponent(this.getAttribute('href')).substring(1);-->
+
+<!--        document.getElementById(targetId).scrollIntoView({-->
+<!--            behavior: 'smooth'-->
+<!--        });-->
+<!--    });-->
+<!--});-->
+document.querySelectorAll('.categoryContainer a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const targetId = decodeURIComponent(this.getAttribute('href')).substring(1);
+        const targetElement = document.getElementById(targetId);
+<!--        const headerHeight = document.querySelector('header').offsetHeight; // adjust this selector according to your header element-->
+
+        if (targetElement) {
+            const targetOffsetTop = targetElement.offsetTop;
+            console.log(targetOffsetTop);
+            const scrollPosition = targetOffsetTop - 200;
+            console.log(scrollPosition);
+
+
+            window.scrollTo({
+                top: scrollPosition,
+                behavior: 'smooth'
+            });
+
+            // Make the category container visible after scrolling
+            const categoryContainer = document.querySelector('.categoryContainerWrapper');
+            if (categoryContainer) {
+                categoryContainer.style.visibility = 'visible';
+            }
+
+        }
+    });
+});
+
+        function openPopup(id) {
+            document.getElementById(id).style.display = 'block';
+        }
+
+        function closePopup(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+	</script>
+
+
+<div class="footer">
+    <div class="footer-content">
+        <h3>Contact Us</h3>
+        <div style="margin: 0%; display: inline-block;padding: 0;"> <p>FOODPORIUM
+            1634/30 Vikash nagar, Jind, Haryana 126102</p>
+            <p>Email: jindfdm@gmail.com</p>
+            <p>Phone: +91-8307961053</p>
+            <p>Opening Hours: Mon - Fri: 10am - 10pm
+                ​​<br>Saturday: 10am - 10pm<br>
+                ​Sunday: 10am - 10pm</p></div>
+    </div>
+    <div class="footer-links">
+        <a href="#" onclick="openPopup('popupTerms')">Terms and Conditions</a>
+        <a href="#" onclick="openPopup('popupRefund')">Refund Policy</a>
+
+        <a href="#" onclick="openPopup('popupShipping')">Shipping Policy</a>
+
+
+    </div>
+</div>
+</body>
+
+</html>

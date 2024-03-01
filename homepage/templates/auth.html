@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Phone Authentication</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+</head>
+<body>
+
+<div>
+    <h2>Firebase Phone Authentication</h2>
+
+    <form id="otp-form">
+        <label for="phone">Phone Number:</label>
+        <input type="tel" id="phone" placeholder="Enter your phone number" required>
+        <button type="button" onclick="sendOTP()">Send OTP</button>
+
+        <br>
+
+        <label for="otp">Enter OTP:</label>
+        <input type="text" id="otp" placeholder="Enter the OTP" required>
+        <button type="button" onclick="verifyOTP()">Verify OTP</button>
+    </form>
+</div>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyACUP8we8Xx6O6Bxj2zl6svHhZ-7reHwHA",
+    authDomain: "foodporium-382b5.firebaseapp.com",
+    projectId: "foodporium-382b5",
+    storageBucket: "foodporium-382b5.appspot.com",
+    messagingSenderId: "147235016672",
+    appId: "1:147235016672:web:642e016f7d2ea8130c2585",
+    measurementId: "G-26HZSNZVT3"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+<script>
+  async function sendOTP() {
+    const phoneNumber = document.getElementById('phone').value;
+    const appVerifier = new RecaptchaVerifier('otp-form', {
+      size: 'invisible',
+      callback: function(response) {
+        // reCAPTCHA solved, allow signInWithPhoneNumber.
+      }
+    });
+
+    try {
+      confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
+      console.log("OTP sent successfully");
+    } catch (error) {
+      console.error("Error sending OTP:", error);
+    }
+  }
+
+</script>
+
+</body>
+</html>

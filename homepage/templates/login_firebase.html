@@ -1,0 +1,886 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!------ Include the above in your HEAD tag ---------->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+    <style>
+        body{
+            font-family: "Poppins", sans-serif;
+        }
+        /* Loader */
+        .error{
+        font-size: 12px;
+        color:red;
+        font-size: bold;
+
+      }
+        .loading{
+            position: absolute;
+            top:0;
+            left:0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(255, 255, 255,0.3);
+            z-index:99;
+            display:none;
+        }
+        .loader{
+            width: 100vw;
+            height: 100vh;
+            /* position: absolute;
+            top:0;
+            left:0;
+            background-color: rgba(0,0,0,0.12); */
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            /* z-index:99; */
+        }
+
+        .signInContainer{
+            position: relative;
+            z-index: 11;
+        }
+
+/* sign in FORM */
+#logreg-forms{
+    width:412px;
+    margin:10vh auto;
+    background-color:#f3f3f3;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}
+#logreg-forms form {
+    width: 100%;
+    max-width: 410px;
+    padding: 15px;
+    margin: auto;
+}
+#logreg-forms .form-control {
+    position: relative;
+    box-sizing: border-box;
+    height: auto;
+    padding: 10px;
+    font-size: 16px;
+}
+#logreg-forms .form-control:focus { z-index: 2; }
+#logreg-forms .form-signin input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+#logreg-forms .form-signin input[type="password"] {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+#logreg-forms .social-login{
+    width:390px;
+    margin:0 auto;
+    margin-bottom: 14px;
+}
+#logreg-forms .social-btn{
+    font-weight: 100;
+    color:white;
+    width:190px;
+    font-size: 0.9rem;
+}
+
+#logreg-forms a{
+    display: block;
+    padding-top:10px;
+    color:lightseagreen;
+}
+
+#logreg-form .lines{
+    width:200px;
+    border:1px solid red;
+}
+/* Background Common */
+.background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.background .rightUpper {
+  position: absolute;
+  right: 0;
+  top: 0;
+  /* z-index:0; */
+}
+.background .leftLower {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    /* z-index:0; */
+}
+
+
+#logreg-forms button[type="submit"]{ margin-top:10px; }
+
+#logreg-forms .facebook-btn{  background-color:#3C589C; }
+
+#logreg-forms .google-btn{ background-color: #DF4B3B; }
+
+#logreg-forms .form-reset, #logreg-forms .form-signup{ display: none; }
+
+#logreg-forms .form-signup .social-btn{ width:210px; }
+
+#logreg-forms .form-signup input { margin-bottom: 2px;}
+
+.form-signup .social-login{
+    width:210px !important;
+    margin: 0 auto;
+}
+
+/* Mobile */
+
+@media screen and (max-width:500px){
+    #logreg-forms{
+        width:300px;
+    }
+
+    #logreg-forms  .social-login{
+        width:200px;
+        margin:0 auto;
+        margin-bottom: 10px;
+    }
+    #logreg-forms  .social-btn{
+        font-size: 1.3rem;
+        font-weight: 100;
+        color:white;
+        width:200px;
+        height: 56px;
+
+    }
+    #logreg-forms .social-btn:nth-child(1){
+        margin-bottom: 5px;
+    }
+    #logreg-forms .social-btn span{
+        display: none;
+    }
+    #logreg-forms  .facebook-btn:after{
+        content:'Facebook';
+    }
+
+    #logreg-forms  .google-btn:after{
+        content:'Google+';
+    }
+
+}
+/* For desktop view */
+.footer {
+            background-color: #f3f3f3;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-links a {
+            margin-right: 10px;
+        }
+
+        /* For mobile view */
+        @media screen and (max-width: 500px) {
+            .footer {
+                padding: 0px;
+            }
+
+            .footer-content {
+                max-width: 100%;
+                padding: 0;
+            }
+
+            .footer-links {
+                margin-top: 0px;
+            }
+
+            .footer-links a {
+                display: block;
+                margin-bottom: 0px;
+            }
+        }
+        .logo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 100px; /* Adjust the width as needed */
+            height: auto;
+        }
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            text-align: center;
+        }
+
+        .popup-content {
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: white;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+
+
+    </style>
+    <title>Foodporium Login</title>
+</head>
+<body>
+<img class="logo" src="https://website0000.s3.amazonaws.com/foodporium/images/food+png.png" alt="Logo">
+<div class="popup-overlay" id="popupShipping">
+    <div class="popup-content">
+        <span class="close-btn" onclick="closePopup('popupShipping')">X</span>
+        <h2>Shipping Policy</h2>
+        <p>
+            1. Delivery Zones and Charges
+            <br>
+            a. Foodporium delivers to specified zones within Jind (including some villages nearby Jind). Delivery charges, if applicable, are calculated based on the delivery location and will be displayed during the checkout process.
+            <br>
+            b. We reserve the right to update delivery zones and charges. Please check the website or contact customer service for the most up-to-date information.
+            <br><br>
+            2. Delivery Timeframes
+            <br>
+            a. Estimated delivery times will be provided at the time of order placement. These estimates are based on factors such as order volume, traffic conditions, and weather.
+            <br>
+            b. Foodporium strives to meet the estimated delivery times but does not guarantee delivery within a specific timeframe. Delays may occur due to unforeseen circumstances.
+            <br><br>
+            3. Delivery Methods
+            <br>
+            a. Foodporium primarily uses its own delivery team for order fulfillment.
+            <br>
+            b. In some cases, third-party delivery services may be utilized. In such instances, the terms and conditions of the third-party service may apply.
+            <br><br>
+            4. Order Tracking
+            <br>
+            a. For orders delivered by Foodporium's own team, limited order tracking may be available. Customers will be notified of the delivery status through SMS or email.
+            <br>
+            b. Orders delivered by third-party services may provide separate tracking options, as per the policies of the third-party service.
+            <br><br>
+            5. Delivery Confirmation
+            <br>
+            a. Once the order is successfully delivered, customers will receive a confirmation notification.
+            <br>
+            b. It is the responsibility of the customer to provide accurate delivery information. Foodporium is not responsible for deliveries to incorrect addresses provided by the customer.
+            <br><br>
+            6. Unavailability and Redelivery
+            <br>
+            a. If a customer is unavailable to receive the delivery, the delivery team will attempt to contact the customer. If unsuccessful, the order may be returned to the store for customer pickup.
+            <br>
+            b. A redelivery attempt may be made, subject to an additional delivery charge.
+            <br><br>
+            7. Contact Information
+            <br>
+            If you have any questions or concerns about our Delivery Policy, please contact us at jindfdm@gmail.com.
+        </p>
+    </div>
+</div>
+<div class="popup-overlay" id="popupTerms">
+    <div class="popup-content">
+        <span class="close-btn" onclick="closePopup('popupTerms')">X</span>
+        <h2>Terms and Conditions</h2>       <p>
+        1. Acceptance of Terms
+        By accessing and using the Foodporium website (the "Site"), you agree to comply with and be bound by these Terms and Conditions. If you do not agree to these terms, please refrain from using the Site.
+        <br><br>
+        2. Changes to Terms
+        Foodporium reserves the right to modify, update, or change these Terms and Conditions at any time without prior notice. It is your responsibility to review these terms regularly.
+        <br><br>
+        3. Use of the Site
+        You agree to use the Site for lawful purposes only. You may not use the Site in any way that could harm, disable, overburden, or impair our services or interfere with any other party's use and enjoyment of the Site.
+        <br><br>
+        4. Ordering and Purchases
+        a. Menu Information: Foodporium strives to provide accurate and up-to-date menu information, but we do not guarantee the accuracy of such information. Prices and availability are subject to change without notice.
+        b. Online Orders: When placing orders through our website, you agree to provide accurate and complete information. Foodporium is not responsible for errors in the information provided by you.
+        c. Payment: Payments for orders placed through the website are processed securely. Foodporium does not store credit card information.
+        <br><br>
+        5. Privacy Policy
+        Your use of the Site is also governed by our Privacy Policy,
+        <br><br>
+        6. Intellectual Property
+        a. Trademarks and Copyrights: All trademarks, logos, and content on the Site are the property of Foodporium and are protected by intellectual property laws.
+        b. Use of Content: You may not reproduce, distribute, display, or create derivative works of any content on the Site without the express written permission of Foodporium.
+        <br><br>
+        7. Limitation of Liability
+        Foodporium is not liable for any direct, indirect, incidental, consequential, or punitive damages arising from the use of the Site or any services provided.
+        <br><br>
+        8. Governing Law
+        These Terms and Conditions are governed by and construed in accordance with the laws and you irrevocably submit to the exclusive jurisdiction of the courts in that location.
+        <br><br>
+        9. Contact Information
+        If you have any questions or concerns about these Terms and Conditions, please contact us at jindfdm@gmail.com
+    </p>
+    </div>
+</div>
+
+<div class="popup-overlay" id="popupRefund">
+    <div class="popup-content">
+        <span class="close-btn" onclick="closePopup('popupRefund')">X</span>
+        <h2>Refund Policy</h2>
+        <p>
+            1. Returns and Exchanges
+            <br>
+            a. In-Store Purchases: Foodporium does not accept returns or exchanges for food items purchased in-store.
+            <br>
+            b. Online Orders: Returns and exchanges are not applicable for food items ordered online due to the nature of the products.
+            <br><br>
+            2. Refunds
+            <br>
+            a. In-Store Purchases: Refunds for in-store purchases are not applicable for food items.
+            <br>
+            b. Online Orders: Refunds for online orders will be processed through the original payment method within 5 working days. Shipping and handling fees are non-refundable.
+            <br><br>
+            3. Damaged or Incorrect Items
+            <br>
+            If you receive a damaged or incorrect food item, please contact Foodporium customer service within 2 days of receiving the order. We will arrange for a replacement or issue a refund, as appropriate.
+            <br><br>
+            4. How to Initiate a Return
+            <br>
+            a. In-Store Purchases: Food items purchased in-store are not eligible for returns.
+            <br>
+            b. Online Orders: To report a damaged or incorrect food item in an online order, please contact our customer service at jindfdm@gmail.com. Provide your order number and details about the issue.
+            <br><br>
+            5. Cancellation Policy
+            <br>
+            a. In-Store Orders: Once an order is placed in-store, it cannot be canceled or modified.
+            <br>
+            b. Online Orders: Online orders can be canceled within 2 hours of placing the order by contacting our customer service at jindfdm@gmail.com.
+            <br><br>
+            6. Refund Processing Time
+            <br>
+            Refunds for eligible online orders will be processed within 5 working days from the date of approval.
+            <br><br>
+            7. Contact Information
+            <br>
+            If you have any questions or concerns about our Return and Refund Policy, please contact us at jindfdm@gmail.com.
+        </p>
+    </div>
+</div>
+
+
+
+<div style="height: 100vh;" class="signInContainer d-flex justify-content-center align-items-center">
+    <div id="logreg-forms">
+        <form class="form-signin" accept="#">
+            <!-- <h1 class="h3 mb-3 font-weight-normal" style="text-align: center"> Sign in</h1>
+                <div class="social-login">
+                    <button class="btn facebook-btn social-btn" type="button" id="facebooklogin"><span><i class="fab fa-facebook-f"></i> Sign in with Facebook</span> </button>
+                    <button class="btn google-btn social-btn" type="button" id="googleLogin"><span><i class="fab fa-google-plus-g"></i> Sign in with Google+</span> </button>
+                </div> -->
+            <!-- <p style="text-align:center"> OR  </p>
+            <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required="" autofocus="">
+            <input type="password" id="inputPassword" class="form-control" placeholder="Password" required="">
+
+            <button class="btn btn-success btn-block" id="loginbtn" type="button"><i class="fas fa-sign-in-alt"></i> Sign in</button>
+
+            <p style="text-align:center"> OR  </p> -->
+            <h1 class="h3 mb-3 font-weight-bold" style="text-align: center"> Food Porium</h1>
+            <input type="text" id="inputPhone" class="form-control" placeholder="PHONE" required="" autofocus="" style="margin-bottom: 1rem;" onchange="phoneValidation()" oninput="phoneValidation2()">
+            <div id="recaptcha-container"></div>
+            <button class="btn btn-block" style="background-color: orange !important;" type="button" id="phoneloginbtn"><i class="fas fa-sign-in-alt"></i> Login</button>
+            <button id="changeNumber" onclick="changeNumber()" class="btn btn-block" style="display: none; background-color: lightgray !important;" >Change Number</button>
+            <div id="otpContainer" >
+                <hr>
+                <input type="text" id="inputOtp" class="mb-3 form-control" placeholder="OTP" maxlength="6" oninput="otpValidation()">
+                <button class="btn btn-block" style="background-color: orange !important;"type="button" id="verifyotp" disabled><i class="fas fa-sign-in-alt"></i> VERIFY OTP</button>
+                <p id="wrongOtpError" style="display: none;" class="error">Enter Correct OTP</p>
+            </div>
+
+
+
+            <!-- <hr> -->
+            <!-- <p>Don't have an account!</p>  -->
+            <!-- <button class="btn btn-primary btn-block" type="button" id="btn-signup"><i class="fas fa-user-plus"></i> Sign up New Account</button> -->
+        </form>
+
+        <form action="/reset/password/" class="form-reset">
+            <input type="email" id="resetEmail" class="form-control" placeholder="Email address" required="" autofocus="">
+            <button class="btn btn-primary btn-block" type="submit">Reset Password</button>
+            <a href="#" id="cancel_reset"><i class="fas fa-angle-left"></i> Back</a>
+        </form>
+
+        <form action="#" class="form-signup">
+            <div class="social-login">
+                <button class="btn facebook-btn social-btn" type="button"><span><i class="fab fa-facebook-f"></i> Sign in with Facebook</span> </button>
+            </div>
+            <div class="social-login">
+                <button class="btn google-btn social-btn" type="button"><span><i class="fab fa-google-plus-g"></i> Sign in with Google+</span> </button>
+            </div>
+
+            <p style="text-align:center">OR</p>
+
+            <input type="email" id="useremail" class="form-control" placeholder="Email address" required autofocus="">
+            <input type="password" id="userpass" class="form-control" placeholder="Password" required autofocus="">
+
+            <button class="btn btn-primary btn-block" type="button" id="signupbtn"><i class="fas fa-user-plus"></i> Sign Up</button>
+            <a href="#" id="cancel_signup"><i class="fas fa-angle-left"></i> Back</a>
+        </form>
+        <br>
+
+    </div>
+</div>
+
+<!-- Background Common -->
+<!-- <div class="background">
+    <div class="rightUpper">
+        <svg xmlns="http://www.w3.org/2000/svg" width="352" height="477" viewBox="0 0 352 477" fill="none">
+            <path d="M147.141 208.93C147.141 110.461 41.9087 25.7427 0 0H353V476.5C289 476.5 147.141 315.5 147.141 208.93Z" fill="orange"/>
+          </svg>
+    </div>
+    <div class="leftLower">
+        <svg xmlns="http://www.w3.org/2000/svg" width="470" height="497" viewBox="0 0 470 497" fill="none">
+            <path d="M220.5 322.5C187.771 141.714 135 11.5 0 0.5V497H470C460 463.5 241.5 438.5 220.5 322.5Z" fill="orange"/>
+          </svg>
+    </div>
+</div> -->
+
+<div class="background">
+    <div class="rightUpper">
+        <svg xmlns="http://www.w3.org/2000/svg" width="176" height="238.5" viewBox="0 0 352 477" fill="none">
+            <path d="M147.141 208.93C147.141 110.461 41.9087 25.7427 0 0H353V476.5C289 476.5 147.141 315.5 147.141 208.93Z" fill="orange"/>
+        </svg>
+    </div>
+    <div class="leftLower">
+        <svg xmlns="http://www.w3.org/2000/svg" width="235" height="248.5" viewBox="0 0 470 497" fill="none">
+            <path d="M220.5 322.5C187.771 141.714 135 11.5 0 0.5V497H470C460 463.5 241.5 438.5 220.5 322.5Z" fill="orange"/>
+        </svg>
+    </div>
+</div>
+
+<div class="loading">
+    <div class="loader">
+        <img src="{{ gif.gif_file.url }}" alt="loading...">
+    </div>
+</div>
+<script>
+function toggleResetPswd(e){
+    e.preventDefault();
+    $('#logreg-forms .form-signin').toggle() // display:block or none
+    $('#logreg-forms .form-reset').toggle() // display:block or none
+}
+
+function toggleSignUp(e){
+    e.preventDefault();
+    $('#logreg-forms .form-signin').toggle(); // display:block or none
+    $('#logreg-forms .form-signup').toggle(); // display:block or none
+}
+
+$(()=>{
+    // Login Register Form
+    $('#logreg-forms #forgot_pswd').click(toggleResetPswd);
+    $('#logreg-forms #cancel_reset').click(toggleResetPswd);
+    $('#logreg-forms #btn-signup').click(toggleSignUp);
+    $('#logreg-forms #cancel_signup').click(toggleSignUp);
+});
+
+</script>
+
+</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-analytics.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/7.19.0/firebase-auth.js"></script>
+
+
+<script>
+      // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyACUP8we8Xx6O6Bxj2zl6svHhZ-7reHwHA",
+      authDomain: "foodporium-382b5.firebaseapp.com",
+      projectId: "foodporium-382b5",
+      storageBucket: "foodporium-382b5.appspot.com",
+      messagingSenderId: "147235016672",
+      appId: "1:147235016672:web:642e016f7d2ea8130c2585",
+      measurementId: "G-26HZSNZVT3"
+    };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+
+  var signupbtn=document.getElementById("signupbtn");
+  var emailsignup=document.getElementById("useremail");
+  var passswordsignup=document.getElementById("userpass");
+
+
+  //================Signup With Email and Password==========================
+  signupbtn.onclick=function(){
+      signupbtn.disabled=true;
+      signupbtn.textContent="Registering Your Account! Please Wait";
+      firebase.auth().createUserWithEmailAndPassword(emailsignup.value,passswordsignup.value).then(function(response){
+        sendingVerifyEmail(signupbtn);
+            console.log(response);
+      })
+      .catch(function(error){
+        signupbtn.disabled=false;
+        signupbtn.textContent="Sign Up";
+          console.log(error);
+      })
+
+
+  };
+
+  function sendingVerifyEmail(button){
+     firebase.auth().currentUser.sendEmailVerification().then(function(response){
+                signupbtn.disabled=false;
+        signupbtn.textContent="Sign Up S";
+
+        console.log(response);
+     })
+     .catch(function(error){
+                signupbtn.disabled=false;
+        signupbtn.textContent="Sign Up S";
+
+         console.log(error);
+     })
+  }
+  //================End Signup With Email and Password======================
+
+  //==========================Sign in With Email and Password============================
+
+//    var loginemail=document.getElementById("inputEmail");
+//    var loginpassword=document.getElementById("inputPassword");
+//    var loginbtn=document.getElementById("loginbtn");
+
+
+//    loginbtn.onclick=function(){
+//     loginbtn.disabled=true;
+//     loginbtn.textContent="Logging In Please Wait..";
+//        firebase.auth().signInWithEmailAndPassword(loginemail.value,loginpassword.value).then(function(response){
+//            console.log(response);
+//            loginbtn.disabled=false;
+//     loginbtn.textContent="Sign In"
+//             var userobj=response.user;
+//             var token=userobj.xa;
+//             var provider="email";
+//             var email=loginemail.value;
+//             if(token!=null && token!=undefined && token!=""){
+//             sendDatatoServerPhp(email,provider,token,email);
+//             }
+//        })
+//        .catch(function(error){
+//            console.log(error);
+//            loginbtn.disabled=false;
+//         loginbtn.textContent="Sign In"
+
+//        })
+//    }
+  //======================Sign With Email and Password
+
+
+   //===================Saving Login Details in My Server Using AJAX================
+   function sendDatatoServerPhp(email,provider,token,username){
+
+        var xhr = new XMLHttpRequest();
+        //xhr.withCredentials = true;
+
+        xhr.addEventListener("readystatechange", function() {
+        if(this.readyState === 4) {
+            console.log(this.responseText);
+            if(this.responseText=="login_success"){
+                alert("Login Successfull");
+                location='/homePage';
+            }
+            else if(this.responseText=="Please Verify Your Email to Get Login"){
+                alert("Please Verify Your Email to Login")
+            }
+            else{
+                alert("Error in Login");
+            }
+        }
+        });
+
+        xhr.open("POST", "http://127.0.0.1:8000/firebase_login_save",true);
+        xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+        xhr.send("email="+email+"&provider="+provider+"&username="+username+"&token="+token);
+   }
+   //===========================End Saving Details in My Server=======================
+   //=========================Login With Phone==========================
+   var loginphone=document.getElementById("phoneloginbtn");
+   var phoneinput=document.getElementById("inputPhone");
+   var otpinput=document.getElementById("inputOtp");
+   var verifyotp=document.getElementById("verifyotp");
+
+   loginphone.onclick=function(){
+    $('#phoneloginbtn').attr('disabled', true);
+    $('.loading').css('display','block')
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+        'size': 'invisible',
+        'callback': function(response) {
+            console.log("otp send")
+            // reCAPTCHA solved, allow signInWithPhoneNumber.
+            // ...
+            $('#otpContainer').css('display','block')
+            $('#changeNumber').css('display','block')
+            $('#inputPhone').attr('disabled', true);
+            // $('#phoneloginbtn').attr('disabled', true);
+            $('.loading').css('display','none')
+        },
+        'expired-callback': function() {
+            // Response expired. Ask user to solve reCAPTCHA again.
+            // ...
+            $('.loading').css('display','none')
+        }
+        });
+
+        var cverify=window.recaptchaVerifier;
+
+        firebase.auth().signInWithPhoneNumber(`+91${phoneinput.value}`,cverify).then(function(response){
+            console.log(response);
+            window.confirmationResult=response;
+            $('#loader').css('display','none')
+        }).catch(function(error){
+            console.log(error);
+        })
+   }
+
+   verifyotp.onclick=function(){
+    $('.loading').css('display','block')
+       confirmationResult.confirm(otpinput.value).then(function(response){
+           console.log(response);
+            var userobj=response.user;
+            var token=userobj.xa;
+            var provider="phone";
+            var email=phoneinput.value;
+            if(token!=null && token!=undefined && token!=""){
+            const data = {
+                          username: email ,
+                          provider: provider,
+                          token: token,
+                        };
+
+                        fetch('/firebase_login_save/', {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken'), // Include CSRF token for security (make sure to implement the getCookie function)
+                          },
+                          body: JSON.stringify(data),
+                        })
+                          .then(data => {
+                            console.log('Response:', data);
+                            if (data.success) {
+                                $('.loading').css('display','none')
+                              // Redirect to a new page on success
+                              window.location.href = '/';
+                            } else {
+                              // Handle other cases or display an error message
+                              window.location.href = '/';
+
+                              console.error('Failed to save Firebase login:', data.message);
+                            }
+                          })
+                          .catch(error => {
+                            console.error('Error:', error);
+                            // Handle error
+                          });
+
+                        function getCookie(name) {
+                          const value = `; ${document.cookie}`;
+                          const parts = value.split(`; ${name}=`);
+                          if (parts.length === 2) return parts.pop().split(';').shift();
+                        }
+
+            }
+       })
+       .catch(function(error){
+        $('.loading').css('display','none')
+        $('#wrongOtpError').css('display','block')
+           console.log("wrong otp Try again")
+           console.log(error);
+       })
+   }
+   //=================End Login With Phone=========================
+
+   ///=================Login With google===========================
+//    var googleLogin=document.getElementById("googleLogin");
+
+//    googleLogin.onclick=function(){
+//        var provider=new firebase.auth.GoogleAuthProvider();
+
+//        firebase.auth().signInWithPopup(provider).then(function(response){
+//            var userobj=response.user;
+//             var token=userobj.xa;
+//             var provider="google";
+//             var email=userobj.email;
+//             if(token!=null && token!=undefined && token!=""){
+//             sendDatatoServerPhp(email,provider,token,userobj.displayName);
+//             }
+
+//            console.log(response);
+//        })
+//        .catch(function(error){
+//            console.log(error);
+//        })
+
+
+//    }
+   //=======================End Login With Google==================
+   //======================Login With Facebook==========================
+//    var facebooklogin=document.getElementById("facebooklogin");
+//    facebooklogin.onclick=function(){
+//     var provider=new firebase.auth.FacebookAuthProvider();
+
+// firebase.auth().signInWithPopup(provider).then(function(response){
+//     var userobj=response.user;
+//      var token=userobj.xa;
+//      var provider="facebook";
+//      var email=userobj.email;
+//      if(token!=null && token!=undefined && token!=""){
+//      sendDatatoServerPhp(email,provider,token,userobj.displayName);
+//      }
+
+//     console.log(response);
+// })
+// .catch(function(error){
+//     console.log(error);
+// })
+
+
+//    }
+   //======================End Login With Facebook==========================
+</script>
+
+<script>
+    // const otpCont = document.getElementById("otpContainer")
+    // otpCont.style.css.display = 'none'
+    function changeNumber(){
+            console.log("change number function called")
+            $('#otpContainer').css('display','none')
+            $('#changeNumber').css('display','none')
+            $('#phoneloginbtn').removeAttr('disabled')
+            $('#inputPhone').removeAttr('disabled')
+    }
+    $(document).ready(function(){
+        $('#otpContainer').css('display','none')
+        $('#phoneloginbtn').attr('disabled',true)
+        $('.loading').css('display','none')
+    })
+    function otpValidation(){
+        if($('#inputOtp').val().length!=6){
+            $('#verifyotp').attr('disabled',true)
+        }else{
+            $('#verifyotp').removeAttr('disabled')
+        }
+        $('#wrongOtpError').css('display','none')
+        const otpVal = document.getElementById('inputOtp')
+        if(isNaN(Number(otpVal.value))){
+            otpVal.value = '';
+            return;
+        }
+    }
+    function phoneValidation2(){
+        var inputPhone = document.getElementById("inputPhone");
+        if(isNaN(Number(inputPhone.value))){
+            inputPhone.value = '';
+            return;
+        }
+        if (inputPhone.value.length > 10) {
+                // Show an alert message or perform any other action as needed
+                phoneNumber = inputPhone.value.substring(0, 10);
+                inputPhone.value = phoneNumber;
+            }
+            if(inputPhone.value.length===10){
+                var phonePattern = /^[6-9]\d{9}$/;
+
+                // Check if the entered phone number matches the pattern
+                if (!phonePattern.test(inputPhone.value)) {
+                // Valid phone number
+                alert('Please enter a valid Indian mobile number.');
+                inputPhone.value=""
+                return
+                } else{
+                    $('#phoneloginbtn').removeAttr('disabled')
+                }
+            }else{
+
+                $('#phoneloginbtn').attr('disabled',true)
+            }
+    }
+
+
+    function phoneValidation() {
+            // Get the input element by its ID
+            var inputPhone = document.getElementById("inputPhone");
+
+            // Define the regular expression pattern for an Indian mobile number
+            var phonePattern = /^[6-9]\d{9}$/;
+
+            // Check if the entered phone number matches the pattern
+            if (!phonePattern.test(inputPhone.value)) {
+                // Valid phone number
+                alert('Please enter a valid Indian mobile number.');
+                inputPhone.value=""
+                return
+            }
+        }
+
+        function openPopup(id) {
+            document.getElementById(id).style.display = 'block';
+        }
+
+        function closePopup(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+</script>
+<div class="footer">
+    <div class="footer-content">
+        <h3>Contact Us</h3>
+        <div style="margin: 0%; display: inline-block;padding: 0;"> <p>FOODPORIUM
+            1634/30 Vikash nagar, Jind, Haryana 126102</p>
+            <p>Email: jindfdm@gmail.com</p>
+            <p>Phone: +91-8307961053</p>
+            <p>Opening Hours: Mon - Fri: 10am - 10pm
+                ​​<br>Saturday: 10am - 10pm<br>
+                ​Sunday: 10am - 10pm</p></div>
+    </div>
+    <div class="footer-links">
+        <a href="#" onclick="openPopup('popupTerms')">Terms and Conditions</a>
+        <a href="#" onclick="openPopup('popupRefund')">Refund Policy</a>
+
+        <a href="#" onclick="openPopup('popupShipping')">Shipping Policy</a>
+
+
+    </div>
+</div></body>
+
+</html>
